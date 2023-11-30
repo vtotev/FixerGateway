@@ -23,8 +23,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     @Autowired
     private ModelMapper mapper;
 
-
-
     private void sendMQMessage(Statistics statistics) {
         MQMessageDto message = mapper.map(statistics, MQMessageDto.class);
         mqPublisher.sendMessage(message);

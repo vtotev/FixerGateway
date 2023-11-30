@@ -8,9 +8,10 @@ import com.task.fixergateway.service.StatisticsService;
 import com.task.fixergateway.service.XmlExtService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 import static com.task.fixergateway.core.ServiceName.XML_SERVICE_NAME;
 
@@ -30,6 +31,7 @@ public class XmlExtServiceImpl implements XmlExtService {
     }
 
     @Override
+    @Cacheable(key = "#request.get.currency", value = "XmlResponseDto", sync = true)
     public XmlResponseDto getCurrentRate(XmlRequestDto request) {
         statisticsService.validateRequest(request.getId());
         statisticsService.createRecord(XML_SERVICE_NAME, request.getId(), request.getGet().getConsumer());
@@ -37,10 +39,11 @@ public class XmlExtServiceImpl implements XmlExtService {
     }
 
     @Override
-    public Stream<XmlResponseDto> getHistoryRates(XmlRequestDto request) {
+    @Cacheable(key = "#request.history.currency + '-' + #request.history.currency", value = "XmlResponseDtoList", sync = true)
+    public List<XmlResponseDto> getHistoryRates(XmlRequestDto request) {
         statisticsService.validateRequest(request.getId());
         statisticsService.createRecord(XML_SERVICE_NAME, request.getId(), request.getHistory().getConsumer());
         return rateService.getHistoryRatesForCurrency(request.getHistory().getCurrency(), request.getHistory().getPeriod())
-                .map(this::mapRateToDto);
+                .map(this::mapRateToDto).toList();
     }
 }

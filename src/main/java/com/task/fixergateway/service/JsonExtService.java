@@ -4,10 +4,10 @@ import com.task.fixergateway.persistence.dto.json.JsonRequestHistoryDto;
 import com.task.fixergateway.persistence.dto.json.JsonRequestDto;
 import com.task.fixergateway.persistence.dto.json.JsonResponseDto;
 
-import java.util.stream.Stream;
+import java.util.List;
 
 public interface JsonExtService {
 
     JsonResponseDto getCurrencyLatestRate(JsonRequestDto request);
-    Stream<JsonResponseDto> getCurrencyRateHistoryForPeriod(JsonRequestHistoryDto request);
+    List<JsonResponseDto> getCurrencyRateHistoryForPeriod(JsonRequestHistoryDto request);
 }

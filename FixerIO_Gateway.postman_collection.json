@@ -1,0 +1,122 @@
+{
+	"info": {
+		"_postman_id": "b2175e9b-8033-45f4-8eb9-183535d62a20",
+		"name": "FixerIO_Gateway",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31523615"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/json_api/current",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"requestId\": \"b89577fe-8c37-4962-8af3-7cb89a2451363212034\", \r\n\"timestamp\": 1586335186721,\r\n\"client\": \"1234\",\r\n\"currency\": \"EUR\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/json_api/current",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"json_api",
+						"current"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/json_api/history",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"requestId\": \"b89577fe-8c37-4962-8af3-7cb89a224q93109\", \r\n\"timestamp\": 1586335186721,\r\n\"client\": \"1234\",\r\n\"currency\": \"EUR\",\r\n\"period\": 13\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/json_api/history",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"json_api",
+						"history"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/xml_api/command",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "<command id=\"1234\">\r\n    <get consumer=\"13617162\">\r\n        <currency>EUR</currency>\r\n    </get>\r\n</command>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/xml_api/command",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"xml_api",
+						"command"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "localhost:8080/xml_api/command",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "<command id=\"1234-8785\">\r\n    <history consumer=\"13617162\" currency=\"EUR\" period=\"13\" />\r\n</command>",
+					"options": {
+						"raw": {
+							"language": "xml"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/xml_api/command",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"xml_api",
+						"command"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

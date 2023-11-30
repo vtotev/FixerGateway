@@ -8,6 +8,7 @@ import com.task.fixergateway.rabbitmq.publisher.MQPublisher;
 import com.task.fixergateway.service.FixerApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
@@ -36,6 +37,10 @@ public class FixerApiServiceImpl implements FixerApiService {
 
     @Value("${fixer_io.path_latest}")
     private String pathLatest;
+
+    @CacheEvict(allEntries = true, value = {"JsonResponseDto", "JsonResponseDtoList", "XmlResponseDto", "XmlResponseDtoList"})
+    public void invalidateCache() {
+    }
 
     @Override
     @Scheduled(initialDelayString = "${fixer_io.scheduler.load-initial-delay}", fixedDelayString = "${fixer_io.scheduler.load-fixed-delay}")
@@ -67,5 +72,7 @@ public class FixerApiServiceImpl implements FixerApiService {
 
         MQMessageDto message = new MQMessageDto(FIXER_RATES_LOAD, null, Timestamp.from(Instant.now()), null);
         mqPublisher.sendMessage(message);
+
+        invalidateCache();
     }
 }
