@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: 'postgres:latest'
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    networks:
+      - gateway_api_network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: 'rabbitmq:latest'
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    ports:
+      - ${RABBITMQ_PORT}:${RABBITMQ_PORT}
+    networks:
+      - gateway_api_network
+
+  fixer-gateway-app:
+    env_file:
+      - app.env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "${API_PORT}:${API_PORT}"
+    networks:
+      - gateway_api_network
+    restart: on-failure
+    depends_on:
+      ["postgres", "rabbitmq"]
+
+networks:
+  gateway_api_network:
+
+volumes:
+  postgres_data:
