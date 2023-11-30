@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import static com.task.fixergateway.core.ServiceName.XML_SERVICE_NAME;
 
@@ -37,12 +37,10 @@ public class XmlExtServiceImpl implements XmlExtService {
     }
 
     @Override
-    public List<XmlResponseDto> getHistoryRates(XmlRequestDto request) {
+    public Stream<XmlResponseDto> getHistoryRates(XmlRequestDto request) {
         statisticsService.validateRequest(request.getId());
         statisticsService.createRecord(XML_SERVICE_NAME, request.getId(), request.getHistory().getConsumer());
         return rateService.getHistoryRatesForCurrency(request.getHistory().getCurrency(), request.getHistory().getPeriod())
-                .stream()
-                .map(this::mapRateToDto)
-                .toList();
+                .map(this::mapRateToDto);
     }
 }

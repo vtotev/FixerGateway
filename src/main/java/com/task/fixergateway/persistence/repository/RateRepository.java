@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 @Repository
 public interface RateRepository extends JpaRepository<Rate, Short> {
@@ -16,5 +16,5 @@ public interface RateRepository extends JpaRepository<Rate, Short> {
     Optional<Rate> findLatestRate(String currency);
 
     @Query("select r from Rate r where r.currency = :currency and r.timestamp >= :startTime order by r.timestamp desc")
-    List<Rate> findAllByCurrencyOrderByTimestampDesc(String currency, Timestamp startTime);
+    Stream<Rate> findAllByCurrencyOrderByTimestampDesc(String currency, Timestamp startTime);
 }

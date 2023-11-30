@@ -2,9 +2,9 @@ package com.task.fixergateway.service;
 
 import com.task.fixergateway.persistence.entity.Rate;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 public interface RateService {
     Rate getLatestRateForCurrency(String currency);
-    List<Rate> getHistoryRatesForCurrency(String currency, Integer period);
+    Stream<Rate> getHistoryRatesForCurrency(String currency, Integer period);
 }

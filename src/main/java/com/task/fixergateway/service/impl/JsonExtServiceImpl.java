@@ -11,7 +11,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.stream.Stream;
 
 import static com.task.fixergateway.core.ServiceName.JSON_SERVICE_NAME;
 
@@ -37,13 +37,11 @@ public class JsonExtServiceImpl implements JsonExtService {
     }
 
     @Override
-    public List<JsonResponseDto> getCurrencyRateHistoryForPeriod(JsonRequestHistoryDto request) {
+    public Stream<JsonResponseDto> getCurrencyRateHistoryForPeriod(JsonRequestHistoryDto request) {
         statisticsService.validateRequest(request.getRequestId());
         statisticsService.createRecord(JSON_SERVICE_NAME, request.getRequestId(), request.getClient());
         return rateService.getHistoryRatesForCurrency(request.getCurrency(), request.getPeriod())
-                .stream()
-                .map(this::mapRateToDto)
-                .toList();
+                .map(this::mapRateToDto);
     }
 
 }
