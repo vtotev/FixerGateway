@@ -1,4 +1,5 @@
 services:
+
   postgres:
     container_name: "postgres"
     image: 'postgres:latest'
@@ -12,6 +13,18 @@ services:
       - gateway_api_network
     volumes:
       - postgres_data:/var/lib/postgresql/data
+
+  db-migrations:
+    image: "flyway/flyway:latest"
+    container_name: 'db-migrations'
+    command: ["-url=${DB_DRIVER}://${DB_HOST}:${DB_PORT}/${DB_NAME}", "-user=${DB_USER}", "-password=${DB_PASSWORD}",
+              "-schemas=${DB_SCHEMA}", "-baselineOnMigrate=${FLYWAY_BASELINE_ON_MIGRATE}", "migrate"]
+    volumes:
+      - ./migrations:/flyway/sql
+    networks:
+      - gateway_api_network
+    depends_on:
+      - "postgres"
 
   rabbitmq:
     container_name: "rabbitmq"
@@ -47,7 +60,7 @@ services:
       - gateway_api_network
     restart: on-failure
     depends_on:
-      ["postgres", "rabbitmq", "redis"]
+      ["postgres", "rabbitmq", "redis", 'db-migrations']
 
 networks:
   gateway_api_network:
