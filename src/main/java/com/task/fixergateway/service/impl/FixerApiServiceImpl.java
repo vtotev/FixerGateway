@@ -6,6 +6,8 @@ import com.task.fixergateway.persistence.entity.Rate;
 import com.task.fixergateway.persistence.repository.RateRepository;
 import com.task.fixergateway.rabbitmq.publisher.MQPublisher;
 import com.task.fixergateway.service.FixerApiService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
@@ -16,7 +18,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.util.List;
 
+import static com.task.fixergateway.core.ErrorMessages.UNABLE_TO_READ_FROM_FIXER;
+import static com.task.fixergateway.core.InformationMessages.FIXER_LOAD_SUCCESSFUL;
 import static com.task.fixergateway.core.ServiceName.FIXER_RATES_LOAD;
 
 @Service
@@ -38,6 +43,8 @@ public class FixerApiServiceImpl implements FixerApiService {
     @Value("${fixer_io.path_latest}")
     private String pathLatest;
 
+    private static final Logger log  = LoggerFactory.getLogger(FixerApiServiceImpl.class);
+
     @CacheEvict(allEntries = true, value = {"JsonResponseDto", "JsonResponseDtoList", "XmlResponseDto", "XmlResponseDtoList"})
     public void invalidateCache() {
     }
@@ -56,19 +63,22 @@ public class FixerApiServiceImpl implements FixerApiService {
                 .body(FixerResponseDto.class);
 
         if (data == null || data.getRates() == null) {
-            throw new IllegalStateException("Unable to read data from Fixer.io");
+            throw new IllegalStateException(UNABLE_TO_READ_FROM_FIXER);
         }
 
-        data.getRates().forEach((k, v) -> {
-            Rate rate = Rate.builder()
-                    .baseCurrency(data.getBase())
-                    .currency(k)
-                    .rate(v)
-                    .timestamp(Timestamp.from(Instant.ofEpochSecond(data.getTimestamp())))
-                    .build();
+        List<Rate> rates = data.getRates().entrySet()
+                .stream()
+                .map(r -> Rate.builder()
+                        .baseCurrency(data.getBase())
+                        .currency(r.getKey())
+                        .rate(r.getValue())
+                        .timestamp(Timestamp.from(Instant.ofEpochSecond(data.getTimestamp())))
+                        .build())
+                .toList();
 
-            repository.save(rate);
-        });
+        repository.saveAll(rates);
+
+        log.info(FIXER_LOAD_SUCCESSFUL);
 
         MQMessageDto message = new MQMessageDto(FIXER_RATES_LOAD, null, Timestamp.from(Instant.now()), null);
         mqPublisher.sendMessage(message);

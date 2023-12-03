@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import static com.task.fixergateway.core.InformationMessages.RABBIT_MQ_MESSAGE_SENT;
+
 @Service
 public class MQPublisher {
     @Value("${rabbitmq.exchange.name}")
@@ -18,11 +20,11 @@ public class MQPublisher {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    private static final Logger LOGGER  = LoggerFactory.getLogger(MQPublisher.class);
+    private static final Logger log  = LoggerFactory.getLogger(MQPublisher.class);
 
     public void sendMessage(Object message) {
-        LOGGER.info(String.format("Message send -> %s", message.toString()));
         rabbitTemplate.convertAndSend(exchange, routingKey, message);
+        log.info(String.format(RABBIT_MQ_MESSAGE_SENT, message));
     }
 
 }
