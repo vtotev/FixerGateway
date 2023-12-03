@@ -8,7 +8,6 @@ import com.task.fixergateway.service.StatisticsService;
 import com.task.fixergateway.service.XmlExtService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.Set;
@@ -32,7 +31,6 @@ public class XmlExtServiceImpl implements XmlExtService {
     }
 
     @Override
-    @Cacheable(key = "#request.get.currency", value = "XmlResponseDto", sync = true)
     public XmlResponseDto getCurrentRate(XmlRequestDto request) {
         statisticsService.validateRequest(request.getId());
         statisticsService.createRecord(XML_SERVICE_NAME, request.getId(), request.getGet().getConsumer());
@@ -40,11 +38,11 @@ public class XmlExtServiceImpl implements XmlExtService {
     }
 
     @Override
-    @Cacheable(key = "#request.history.currency + '-' + #request.history.currency", value = "XmlResponseDtoList", sync = true)
     public Set<XmlResponseDto> getHistoryRates(XmlRequestDto request) {
         statisticsService.validateRequest(request.getId());
         statisticsService.createRecord(XML_SERVICE_NAME, request.getId(), request.getHistory().getConsumer());
         return rateService.getHistoryRatesForCurrency(request.getHistory().getCurrency(), request.getHistory().getPeriod())
+                .stream()
                 .map(this::mapRateToDto).collect(Collectors.toSet());
     }
 }

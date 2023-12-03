@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Builder;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 @Entity
@@ -17,7 +18,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Builder
-public class Rate {
+public class Rate implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

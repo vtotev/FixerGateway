@@ -45,7 +45,7 @@ public class FixerApiServiceImpl implements FixerApiService {
 
     private static final Logger log  = LoggerFactory.getLogger(FixerApiServiceImpl.class);
 
-    @CacheEvict(allEntries = true, value = {"JsonResponseDto", "JsonResponseDtoList", "XmlResponseDto", "XmlResponseDtoList"})
+    @CacheEvict(allEntries = true, value = {"Rate", "RateList"})
     public void invalidateCache() {
     }
 
