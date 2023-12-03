@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/json_api")
@@ -31,7 +31,7 @@ public class JsonApiController {
 
     @Transactional
     @PostMapping(value = "/history", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<JsonResponseDto>> postHistory(@RequestBody JsonRequestHistoryDto requestDto) {
+    public ResponseEntity<Set<JsonResponseDto>> postHistory(@RequestBody JsonRequestHistoryDto requestDto) {
        return ResponseEntity.ok(service.getCurrencyRateHistoryForPeriod(requestDto));
     }
 

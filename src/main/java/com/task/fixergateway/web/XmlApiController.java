@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/xml_api")
@@ -27,7 +27,7 @@ public class XmlApiController {
         XmlResponseWrapperDto result = new XmlResponseWrapperDto();
 
         if (request.getGet() != null) {
-            result.setRate(List.of(service.getCurrentRate(request)));
+            result.setRate(Set.of(service.getCurrentRate(request)));
             return ResponseEntity.ok(result);
         }
 

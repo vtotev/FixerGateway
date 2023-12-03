@@ -11,7 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.task.fixergateway.core.ServiceName.XML_SERVICE_NAME;
 
@@ -40,10 +41,10 @@ public class XmlExtServiceImpl implements XmlExtService {
 
     @Override
     @Cacheable(key = "#request.history.currency + '-' + #request.history.currency", value = "XmlResponseDtoList", sync = true)
-    public List<XmlResponseDto> getHistoryRates(XmlRequestDto request) {
+    public Set<XmlResponseDto> getHistoryRates(XmlRequestDto request) {
         statisticsService.validateRequest(request.getId());
         statisticsService.createRecord(XML_SERVICE_NAME, request.getId(), request.getHistory().getConsumer());
         return rateService.getHistoryRatesForCurrency(request.getHistory().getCurrency(), request.getHistory().getPeriod())
-                .map(this::mapRateToDto).toList();
+                .map(this::mapRateToDto).collect(Collectors.toSet());
     }
 }

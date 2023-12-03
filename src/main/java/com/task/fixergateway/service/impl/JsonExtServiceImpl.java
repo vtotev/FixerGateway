@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.task.fixergateway.core.ServiceName.JSON_SERVICE_NAME;
 
@@ -40,11 +41,11 @@ public class JsonExtServiceImpl implements JsonExtService {
 
     @Cacheable(key = "#request.currency + '-' + #request.period", value = "JsonResponseDtoList", sync = true)
     @Override
-    public List<JsonResponseDto> getCurrencyRateHistoryForPeriod(JsonRequestHistoryDto request) {
+    public Set<JsonResponseDto> getCurrencyRateHistoryForPeriod(JsonRequestHistoryDto request) {
         statisticsService.validateRequest(request.getRequestId());
         statisticsService.createRecord(JSON_SERVICE_NAME, request.getRequestId(), request.getClient());
         return rateService.getHistoryRatesForCurrency(request.getCurrency(), request.getPeriod())
-                .map(this::mapRateToDto).toList();
+                .map(this::mapRateToDto).collect(Collectors.toSet());
     }
 
 }
